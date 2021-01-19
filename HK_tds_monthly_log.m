@@ -1,6 +1,6 @@
 function HK_tds_monthly_log(month, year)
 %HK_TDS_MONTHLY_LOG Logs the errors and mode changes of the TDS instrument
-Version = '_V07';
+
 
 %   LOADING HK CDF FILE
 logs = string(['%HK - modes and errors for ' num2str(month) '/' num2str(year)]);
@@ -67,19 +67,16 @@ for i=1:length(days)    % BROWSING DAYS IN MONTH
         for j=1:length(hk.Epoch.data)
             if LMODE ~= hk.HK_TDS_MODE.data(j)
                 [mess, logtime] = HK_log_change(hk.HK_TDS_MODE.data(j), MOD, j, time, 3);
-                disp([logtime, ' ', mess])
                 LMODE = hk.HK_TDS_MODE.data(j);
                 logs(length(logs)+1) = strtrim([logtime, mess]);
             end
             if LCODE ~= hk.HK_TDS_LAST_ER_CODE.data(j)
                 [mess, logtime] = HK_log_change([hk.HK_TDS_LAST_ER_RID.data(j) hk.HK_TDS_LAST_ER_CODE.data(j) hk.HK_TDS_SW_ANOM_DETAIL.data(j)], 'none', j, time, 1);
-                disp([logtime, ' ', mess])
                 LCODE = hk.HK_TDS_LAST_ER_CODE.data(j);
                 logs(length(logs)+1) = strtrim([logtime, mess]);
             end
             if LREJC ~= hk.HK_TDS_REJ_TC_CNT.data(j)
                 [mess, logtime] = HK_log_change([hk.HK_TDS_REJ_TC_CNT.data(j) hk.HK_TDS_LAST_REJ_TC_ID.data(j) hk.HK_TDS_LAST_REJ_TC_TYPE.data(j) hk.HK_TDS_LAST_REJ_TC_SUBTYPE.data(j)],'none', j, time, 4);
-                disp([logtime, ' ', mess])
                 LREJC = hk.HK_TDS_REJ_TC_CNT.data(j);
                 logs(length(logs)+1) = strtrim([logtime, mess]);
             end
@@ -148,8 +145,8 @@ xlabel('Time [day]');
 set(fig,'Units','Inches');
 pos = get(fig,'Position');
 set(fig,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
-print(fig,['.\HK_TDS_monthly_logs\HK_log_' num2str(month,'%02.f') '-' num2str(year) Version  '.pdf'], '-dpdf','-r0')    %CLOSE PDFs BEFORE RUNNING CODE
-pdfs = string(['.\HK_TDS_monthly_logs\HK_log_' num2str(month,'%02.f') '-' num2str(year) Version  '.pdf']);
+print(fig,['.\HK_TDS_monthly_logs\HK_log_' num2str(month,'%02.f') '-' num2str(year)  '.pdf'], '-dpdf','-r0')    %CLOSE PDFs BEFORE RUNNING CODE
+pdfs = string(['.\HK_TDS_monthly_logs\HK_log_' num2str(month,'%02.f') '-' num2str(year)  '.pdf']);
 close(fig)
 %       SECOND PLOT PANEL (STATISTICS)
 fig=figure('Position', [100, 100, 1400, 1100]);
@@ -215,8 +212,8 @@ ylabel('Snapshots in queue');
 set(fig,'Units','Inches');
 pos = get(fig,'Position');
 set(fig,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
-print(fig,['.\HK_TDS_monthly_logs\HK_SWstat_' num2str(month,'%02.f') '-' num2str(year) Version  '.pdf'], '-dpdf','-r0')    %CLOSE PDFs BEFORE RUNNING CODE
-pdfs(length(pdfs)+1) = ['.\HK_TDS_monthly_logs\HK_SWstat_' num2str(month,'%02.f') '-' num2str(year) Version  '.pdf'];
+print(fig,['.\HK_TDS_monthly_logs\HK_SWstat_' num2str(month,'%02.f') '-' num2str(year)  '.pdf'], '-dpdf','-r0')    %CLOSE PDFs BEFORE RUNNING CODE
+pdfs(length(pdfs)+1) = ['.\HK_TDS_monthly_logs\HK_SWstat_' num2str(month,'%02.f') '-' num2str(year)  '.pdf'];
 close(fig)
 
 %   CREATES PDFS WITH HK LOGS 60 LINES PER PDF
@@ -230,9 +227,9 @@ for i = 0:ceil(length(logs)/lines)-1
         if i*lines + j <= length(logs)
             text(0.01,40*j/lines,logs(i*lines + j),'parent',ah,'Interpreter','none');
         end
-    print(fh,'-dpdf','-fillpage',['.\HK_TDS_monthly_logs\HK_log_' num2str(month,'%02.f') '-' num2str(year) '-' num2str(i+1) Version '.pdf'])
+    print(fh,'-dpdf','-fillpage',['.\HK_TDS_monthly_logs\HK_log_' num2str(month,'%02.f') '-' num2str(year) '-' num2str(i+1) '.pdf'])
     end
-    pdfs(length(pdfs)+1) = ['.\HK_TDS_monthly_logs\HK_log_' num2str(month,'%02.f') '-' num2str(year) '-' num2str(i+1) Version '.pdf'];
+    pdfs(length(pdfs)+1) = ['.\HK_TDS_monthly_logs\HK_log_' num2str(month,'%02.f') '-' num2str(year) '-' num2str(i+1) '.pdf'];
     close(fh)
 end
 %   APPEND PDFS AND DELETE THE REST
