@@ -1,0 +1,62 @@
+ERR_NAME,ERR_CODE,ERR_DESCRIPTION
+PRI_TM_FIFO ,150, Priority TM packet queue full for TDS.
+SCI_TM_FIFO ,151, Science TM packet queue full for TDS.
+FPGA_HF_FIFO ,152, Overflow in FPGA internal HF samples FIFO for TDS.
+FPGA_LF_FIFO ,153, Overflow in FPGA internal CWF samples FIFO for TDS.
+LINK_ERROR ,185, TDS link error.
+CTR_MISSING ,186, TDS CTR missing.
+CACHE_CORRECT ,187, Correctable error in cache.
+NO_ERROR ,0, No error.
+PARITY ,1, SpaceWire link error: parity error.
+DISCONNECT ,2, SpaceWire link error: disconnect error.
+ESCAPE ,3, SpaceWire link error: escape sequence error.
+CREDIT ,4, SpaceWire link error: credit error.
+WRITE_SYNC ,5, SpaceWire link error: write synch error.
+RX_AHB ,14, SpaceWire interface RX AHB error.
+TX_AHB ,15, SpaceWire interface TX AHB error.
+HEADER_CRC ,16, Header CRC error.
+DATA_CRC ,17, Data CRC error.
+EARLY_EOP_EEP ,6, SpaceWire network level error: early EOP/EEP.
+INVALID_ADDR ,7, SpaceWire network level error: invalid destination address.
+EEP ,8, SpaceWire network level error: EEP.
+RX_TOO_BIG ,9, SpaceWire network level error: Packet was truncated due to maximum length violation.
+TC_FIFO ,110, TC FIFO.
+SC_RX_FIFO ,111, DPU/Spacecraft SpaceWire interface Rx FIFO.
+SC_TX_FIFO ,112, DPU/Spacecraft SpaceWire interface Tx FIFO.
+LFR_RX_FIFO ,113, DPU/LFR SpaceWire interface Rx FIFO.
+LFR_TX_FIFO ,114, DPU/LFR SpaceWire interface Tx FIFO.
+TDS_RX_FIFO ,115, DPU/TDS SpaceWire interface Rx FIFO.
+TDS_TX_FIFO ,116, DPU/TDS SpaceWire interface Tx FIFO.
+THR_RX_FIFO ,117, DPU/THR SpaceWire interface Rx FIFO.
+THR_TX_FIFO ,118, DPU/THR SpaceWire interface Tx FIFO.
+HK_TM_FIFO ,119, RPW HK TM FIFO.
+SVY_TM_FIFO ,120, Survey science TM packet FIFO.
+SBM_TM_FIFO ,121, SBM science TM packet FIFO.
+OBC_TM_FIFO ,125, OBC TM FIFO.
+COMP_FIFO ,126, Compression FIFO.
+ERRONEOUS ,20, Timecode invalid detected.
+MISSING ,21, A timecode is not received by the GRSPACEWIRE IP core.
+INVALID ,22, A received timecode is detected as invalid by the GRSPACEWIRE IP core.
+NOT_SENT ,23, Timecode not sent.
+TIMECODE_IT ,24, Timecode inconsistent with internal time.
+NOT_SYNCHRO ,25, The DPU has lost synchronization.
+TIMECODE_CTR ,26, Timecode value inconsistent wih CTR time message received from S/C.
+ARITH_OVERFLOW ,42, Unexpected arithmetic overflow condition is detected.
+WRITE_ERR ,43, Write buffer error during data store.
+INS_ACCESS_ERR ,44, Error during instruction fetch.
+ILLEGAL_INS ,45, Illegal program instruction.
+PRIVILIGED_INS ,46, Execution of privileged instruction in user mode.
+REGISTER_HW ,47, Register file EDAC error.
+NOT_ALIGNED ,48, Memory access to un
+DATA_EXCEPTION ,49, Access error during data load.
+DIV_EXCEPTION ,50, Divide by zero.
+CORRECTABLE ,36, AHB correctable error.
+UNCORRECTABLE ,37, AHB not correctable error.
+FAILURE ,62, Erroneous data or loss of data (data canâ€™t be read).
+TIMEOUT ,63, Reception Timeout.
+TOOMANY_ERR ,64, Too many errors occurred.
+SW_LOOP_LONG ,160, TDS main loop iteration exceed time limit.
+SW_PROCANOMALY ,161, TDS science processing encounters unexpected result.
+SW_PROCTIMEOUT ,162, TDS science processing timeout.
+TC_MODE_OVER ,170, Mode change scheduled but overriden for TDS.
+EDAC_NCRIT_MBE ,180, Uncorrectable multi

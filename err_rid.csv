@@ -1,0 +1,13 @@
+﻿ER_NAME,ER_RID,ER_DESCRIPTION
+NO_ERROR ,0, No error.
+LE_TDS_TIME ,42120," TDS Time anomaly (timecode inconsistent, not synchronized)."
+LE_TDS_DPU_SPW ,42131," TDS SpaceWire interface error (link error, network level error, interface RX AHB error, TX AHB error, CRC error, timecode error)."
+LE_TDS_TIMEC ,42132," TDS Timecode anomaly (erroneus, missing, invalid)."
+LE_TDS_SW ,42140, TDS software error.
+LE_TDS_TC ,42141, Telecommand for TDS error.
+LE_TDS_EDAC ,42142, TDS EDAC error.
+ME_TDS_AHB ,42304, TDS failing AHB transaction or uncorrectable error detected by EDAC.
+ME_TDS_DPU_SPW ,42340," TDS Spacecraft SpaceWire interface error (early eopeep, eep, invalid address,rx too big, rx buffer full, tx buffer full)."
+ME_TDS_BUFFER ,42341, TDS buffer overflow.
+ME_TDS_SW ,42349, TDS software error.
+ME_TDS_EDAC ,42350, TDS EDAC error.

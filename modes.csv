@@ -1,0 +1,7 @@
+﻿MODE,NUMBER,DESCRIPTION
+LFM ,5, LFM mode.
+STANDBY ,0, STANDBY mode.
+NORMAL ,1, NORMAL mode.
+BURST ,2, BURST mode.
+SBM1 ,3, SBM1 mode.
+SBM2 ,4, SBM2 mode.
