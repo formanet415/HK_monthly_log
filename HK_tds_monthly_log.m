@@ -1,5 +1,9 @@
-function HK_tds_monthly_log(month, year)
+function HK_tds_monthly_log(month, year, outputDIR)
 %HK_TDS_MONTHLY_LOG Logs the errors and mode changes of the TDS instrument
+if ~exist('outputDIR')
+    outputDIR = '.\HK_TDS_monthly_logs';
+    mkdir(outputDIR);
+end
 
 
 %   LOADING HK CDF FILE
@@ -145,8 +149,8 @@ xlabel('Time [day]');
 set(fig,'Units','Inches');
 pos = get(fig,'Position');
 set(fig,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
-print(fig,['.\HK_TDS_monthly_logs\HK_log_' num2str(month,'%02.f') '-' num2str(year)  '.pdf'], '-dpdf','-r0')    %CLOSE PDFs BEFORE RUNNING CODE
-pdfs = string(['.\HK_TDS_monthly_logs\HK_log_' num2str(month,'%02.f') '-' num2str(year)  '.pdf']);
+print(fig,[outputDIR '\HK_log_' num2str(month,'%02.f') '-' num2str(year)  '.pdf'], '-dpdf','-r0')    %CLOSE PDFs BEFORE RUNNING CODE
+pdfs = string([outputDIR '\HK_log_' num2str(month,'%02.f') '-' num2str(year)  '.pdf']);
 close(fig)
 %       SECOND PLOT PANEL (STATISTICS)
 fig=figure('Position', [100, 100, 1400, 1100]);
@@ -212,8 +216,8 @@ ylabel('Snapshots in queue');
 set(fig,'Units','Inches');
 pos = get(fig,'Position');
 set(fig,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
-print(fig,['.\HK_TDS_monthly_logs\HK_SWstat_' num2str(month,'%02.f') '-' num2str(year)  '.pdf'], '-dpdf','-r0')    %CLOSE PDFs BEFORE RUNNING CODE
-pdfs(length(pdfs)+1) = ['.\HK_TDS_monthly_logs\HK_SWstat_' num2str(month,'%02.f') '-' num2str(year)  '.pdf'];
+print(fig,[outputDIR '\HK_SWstat_' num2str(month,'%02.f') '-' num2str(year)  '.pdf'], '-dpdf','-r0')    %CLOSE PDFs BEFORE RUNNING CODE
+pdfs(length(pdfs)+1) = [outputDIR '\HK_SWstat_' num2str(month,'%02.f') '-' num2str(year)  '.pdf'];
 close(fig)
 
 %   CREATES PDFS WITH HK LOGS 60 LINES PER PDF
@@ -227,9 +231,9 @@ for i = 0:ceil(length(logs)/lines)-1
         if i*lines + j <= length(logs)
             text(0.01,40*j/lines,logs(i*lines + j),'parent',ah,'Interpreter','none');
         end
-    print(fh,'-dpdf','-fillpage',['.\HK_TDS_monthly_logs\HK_log_' num2str(month,'%02.f') '-' num2str(year) '-' num2str(i+1) '.pdf'])
+    print(fh,'-dpdf','-fillpage',[outputDIR '\HK_log_' num2str(month,'%02.f') '-' num2str(year) '-' num2str(i+1) '.pdf'])
     end
-    pdfs(length(pdfs)+1) = ['.\HK_TDS_monthly_logs\HK_log_' num2str(month,'%02.f') '-' num2str(year) '-' num2str(i+1) '.pdf'];
+    pdfs(length(pdfs)+1) = [outputDIR '\HK_log_' num2str(month,'%02.f') '-' num2str(year) '-' num2str(i+1) '.pdf'];
     close(fh)
 end
 %   APPEND PDFS AND DELETE THE REST
@@ -239,7 +243,7 @@ for i = 2:length(pdfs)
 end
 
 %   SAVE LOGS AS TXT
-%fileID = fopen(['.\HK_TDS_monthly_logs\HK_log_' num2str(month,'%02.f') '-' num2str(year) Version '.txt'],'w');
+%fileID = fopen([outputDIR '\HK_log_' num2str(month,'%02.f') '-' num2str(year) Version '.txt'],'w');
 %l = cellstr(logs);
 %fprintf(fileID,'%s\n',l{:});
 %fclose(fileID);
