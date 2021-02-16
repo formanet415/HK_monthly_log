@@ -1,13 +1,23 @@
-function HK_tds_monthly_log(month, year, outputDIR)
+function HK_tds_monthly_log(month, year, inputDIR, outputDIR)
 %HK_TDS_MONTHLY_LOG Logs the errors and mode changes of the TDS instrument
-if ~exist('outputDIR')
-    outputDIR = '.\HK_TDS_monthly_logs';
-    mkdir(outputDIR);
+%   month     number of month         ex: 8
+%   year      number of year          ex: 2020
+%   inputDIR  path to HK data         ex: 'Z:\rpw\HK'
+%   outputDIR path to HK data         ex: 'D:\HK_logs' (the directory has to exist)
+if ~exist(inputDIR, 'dir')
+    error('Input dir does not exist');
+    return
 end
-
-
+if ~exist(outputDIR, 'dir')
+    error('Output dir does not exist');
+    return
+end
+addpath(pwd);
+if inputDIR(end) ~= filesep
+    inputDIR = [inputDIR filesep];
+end
 %   LOADING HK CDF FILE
-logs = string(['%HK - modes and errors for ' num2str(month) '/' num2str(year)]);
+logs = string(['%' sprintf('HK - modes and errors for %4i/%02i', month, year)]);
 load('tempfit.mat');
 
 %   VALUES NEEDED FOR LOGS INTERPRETATION
@@ -15,11 +25,9 @@ LRID = 65535;
 LCODE = 255;
 LMODE = 255;
 LREJC = 0;
-MOD = readtable('modes.csv');
+MOD = table2cell(readtable('modes.csv'));
 
-MOD = table2cell(MOD);
-fig=figure('Position', [100, 100, 1400, 1100]);
-days = struct2cell(dir(['Z:\rpw\HK\' num2str(year) '\' num2str(month,'%02.f') '\']));
+days = struct2cell(dir([inputDIR filesep num2str(year) filesep num2str(month,'%02.f') ]));
 days = days(1,3:end);
 
 Epoch = [];
@@ -42,12 +50,35 @@ SNAPSHOT_MIN_Q_FACT = [];
 S_N_QUEUE = [];
 S_S2_QUEUE = [];
 
-for i=1:length(days)    % BROWSING DAYS IN MONTH
-    files = dir(['Z:\rpw\HK\' num2str(year) '\' num2str(month,'%02.f') '\' char(days(i)) '\']);
-    fname = findfullpath(files, 'solo_HK_rpw-tds');
+for i=days    % BROWSING DAYS IN MONTH
+    fPath = dir(fullfile(inputDIR,sprintf('%4i/%02i/%02i/solo_HK_rpw-tds*',year,month,str2double(i))));
+    if size(fPath) == [1,1]
+    	fname = fullfile(fPath.folder, fPath.name);
+    elseif size(fPath) == [0,1]
+        disp(['file not found: ' fullfile(inputDIR,sprintf('%4i/%02i/%02i/solo_HK_rpw-tds*',year,month,str2double(i)))])
+        continue
+    elseif length(fPath) > 1
+        disp('multiple files found, choosing highest version')
+        names = struct2cell(fPath);
+        names = names(1,:);
+        version = [];
+        for j=1:length(names)
+            name = char(names(j));
+            Vindex = strfind(name, 'V');
+            version(j) = str2num(name(Vindex+1:Vindex+2));
+        end
+        if sum(max(version) == version) == 1
+            fname = fullfile(fPath.folder, char(names(max(version) == version)));
+        else
+            disp('choosing failed, multiple files with same version')
+        end
+    end
+            
+    
     %   GATHERING TEMPERATURE DATA
     
-    if (fname~=0)
+    if exist(fname, 'file')
+       
         hk = cdf_load_tds_hk(fname);
         Epoch = [Epoch; hk.Epoch.data];
         PCB_Temperature = [PCB_Temperature; tempfit(hk.HK_TDS_TEMP_PCB.data)];
@@ -87,9 +118,11 @@ for i=1:length(days)    % BROWSING DAYS IN MONTH
         end
     end
 end
-    
-
+if isempty(Epoch)
+    return;
+end
 % PLOTTING THE TEMPERATURE DATA
+fig = figure('Position', [100, 100, 1400, 1100]);
 subplot(3,1,1)
 plot(Epoch, PCB_Temperature);
 datetick('x','dd');
@@ -146,14 +179,16 @@ title(['HK SW Performance ' num2str(month) '-' num2str(year)])
 xlabel('Time [day]');
 
 
+
 set(fig,'Units','Inches');
 pos = get(fig,'Position');
 set(fig,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
-print(fig,[outputDIR '\HK_log_' num2str(month,'%02.f') '-' num2str(year)  '.pdf'], '-dpdf','-r0')    %CLOSE PDFs BEFORE RUNNING CODE
-pdfs = string([outputDIR '\HK_log_' num2str(month,'%02.f') '-' num2str(year)  '.pdf']);
+oFilePath=fullfile(outputDIR, sprintf('HK_log_%02i-%4i.pdf',month, year));
+delete(oFilePath)
+print(fig, oFilePath, '-dpdf','-r0')    %CLOSE PDFs BEFORE RUNNING CODE
 close(fig)
-%       SECOND PLOT PANEL (STATISTICS)
-fig=figure('Position', [100, 100, 1400, 1100]);
+
+fig = figure('Position', [100, 100, 1400, 1100]);
 subplot(3,1,1);
 [Epo, SNAPSHOT_CNT] = HK_cleaner(SNAPSHOT_CNT, Epoch, hk.HK_TDS_SNAPSHOT_CNT.VALIDMAX);
 plot(Epo, SNAPSHOT_CNT);
@@ -212,13 +247,16 @@ title(['HK snapshot queue statistics ' num2str(month) '-' num2str(year)])
 xlabel('Time [day]');
 ylabel('Snapshots in queue');
 
-
 set(fig,'Units','Inches');
 pos = get(fig,'Position');
 set(fig,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
-print(fig,[outputDIR '\HK_SWstat_' num2str(month,'%02.f') '-' num2str(year)  '.pdf'], '-dpdf','-r0')    %CLOSE PDFs BEFORE RUNNING CODE
-pdfs(length(pdfs)+1) = [outputDIR '\HK_SWstat_' num2str(month,'%02.f') '-' num2str(year)  '.pdf'];
+oFilePathap=fullfile(outputDIR, sprintf('.HK_log_%02i-%4iap.pdf',month, year));
+print(fig,oFilePathap, '-dpdf','-r0');    %CLOSE PDFs BEFORE RUNNING CODE
 close(fig)
+append_pdfs(oFilePath, oFilePathap)
+delete(oFilePathap)
+
+
 
 %   CREATES PDFS WITH HK LOGS 60 LINES PER PDF
 lines = 60;
@@ -231,22 +269,13 @@ for i = 0:ceil(length(logs)/lines)-1
         if i*lines + j <= length(logs)
             text(0.01,40*j/lines,logs(i*lines + j),'parent',ah,'Interpreter','none');
         end
-    print(fh,'-dpdf','-fillpage',[outputDIR '\HK_log_' num2str(month,'%02.f') '-' num2str(year) '-' num2str(i+1) '.pdf'])
+    print(fh,'-dpdf','-fillpage',oFilePathap)
     end
-    pdfs(length(pdfs)+1) = [outputDIR '\HK_log_' num2str(month,'%02.f') '-' num2str(year) '-' num2str(i+1) '.pdf'];
     close(fh)
-end
-%   APPEND PDFS AND DELETE THE REST
-append_pdfs(pdfs(1), pdfs(2:end))
-for i = 2:length(pdfs)
-    delete(pdfs(i))
+    append_pdfs(oFilePath, oFilePathap)
+    delete(oFilePathap)
 end
 
-%   SAVE LOGS AS TXT
-%fileID = fopen([outputDIR '\HK_log_' num2str(month,'%02.f') '-' num2str(year) Version '.txt'],'w');
-%l = cellstr(logs);
-%fprintf(fileID,'%s\n',l{:});
-%fclose(fileID);
 end
 
 function [t, d] = HK_cleaner(data, epoch, VALIDMAX) %Function to get values to plot without invalid values
