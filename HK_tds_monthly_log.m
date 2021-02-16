@@ -70,7 +70,8 @@ for i=days    % BROWSING DAYS IN MONTH
         if sum(max(version) == version) == 1
             fname = fullfile(fPath.folder, char(names(max(version) == version)));
         else
-            disp('choosing failed, multiple files with same version')
+            error('choosing failed, multiple files with same version')
+            return
         end
     end
             
@@ -119,6 +120,7 @@ for i=days    % BROWSING DAYS IN MONTH
     end
 end
 if isempty(Epoch)
+    error('Data failed to load')
     return;
 end
 % PLOTTING THE TEMPERATURE DATA
