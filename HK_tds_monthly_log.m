@@ -12,6 +12,10 @@ if ~exist(outputDIR, 'dir')
     error('Output dir does not exist');
     return
 end
+if exist('append_pdfs') ~= 2
+    error('Library export_fig not found in path. Install library or add to path. https://github.com/altmany/export_fig');
+    return
+end
 addpath(pwd);
 if inputDIR(end) ~= filesep
     inputDIR = [inputDIR filesep];
