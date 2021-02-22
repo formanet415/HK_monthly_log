@@ -31,8 +31,6 @@ LMODE = 255;
 LREJC = 0;
 MOD = table2cell(readtable('modes.csv'));
 
-days = struct2cell(dir([inputDIR filesep num2str(year) filesep num2str(month,'%02.f') ]));
-days = days(1,3:end);
 
 Epoch = [];
 PCB_Temperature = [];
@@ -54,12 +52,12 @@ SNAPSHOT_MIN_Q_FACT = [];
 S_N_QUEUE = [];
 S_S2_QUEUE = [];
 
-for i=days    % BROWSING DAYS IN MONTH
-    fPath = dir(fullfile(inputDIR,sprintf('%4i/%02i/%02i/solo_HK_rpw-tds*',year,month,str2double(i))));
+for i=1:eomday(year,month)    % BROWSING DAYS IN MONTH
+    fPath = dir(fullfile(inputDIR,sprintf('%4i/%02i/%02i/solo_HK_rpw-tds*',year,month,i)));
     if size(fPath) == [1,1]
     	fname = fullfile(fPath.folder, fPath.name);
     elseif size(fPath) == [0,1]
-        disp(['file not found: ' fullfile(inputDIR,sprintf('%4i/%02i/%02i/solo_HK_rpw-tds*',year,month,str2double(i)))])
+        disp(['Missing data - file not found: ' fullfile(inputDIR,sprintf('%4i/%02i/%02i/solo_HK_rpw-tds*',year,month,i))])
         continue
     elseif length(fPath) > 1
         disp('multiple files found, choosing highest version')
@@ -124,7 +122,7 @@ for i=days    % BROWSING DAYS IN MONTH
     end
 end
 if isempty(Epoch)
-    error('Data failed to load')
+    error('Data failed to load - no data found')
     return;
 end
 % PLOTTING THE TEMPERATURE DATA
@@ -190,7 +188,9 @@ set(fig,'Units','Inches');
 pos = get(fig,'Position');
 set(fig,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
 oFilePath=fullfile(outputDIR, sprintf('HK_log_%02i-%4i.pdf',month, year));
-delete(oFilePath)
+if exist(oFilePath, 'file') == 2
+    delete(oFilePath)
+end
 print(fig, oFilePath, '-dpdf','-r0')    %CLOSE PDFs BEFORE RUNNING CODE
 close(fig)
 
