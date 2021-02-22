@@ -4,6 +4,8 @@ function HK_tds_monthly_log(month, year, inputDIR, outputDIR)
 %   year      number of year          ex: 2020
 %   inputDIR  path to HK data         ex: 'Z:\rpw\HK'
 %   outputDIR path to HK data         ex: 'D:\HK_logs' (the directory has to exist)
+
+
 if ~exist(inputDIR, 'dir')
     error('Input dir does not exist');
     return
@@ -13,8 +15,7 @@ if ~exist(outputDIR, 'dir')
     return
 end
 if exist('append_pdfs') ~= 2
-    error('Library export_fig not found in path. Install library or add to path. https://github.com/altmany/export_fig');
-    return
+    addpath('export_fig')
 end
 addpath(pwd);
 if inputDIR(end) ~= filesep
@@ -187,7 +188,7 @@ xlabel('Time [day]');
 set(fig,'Units','Inches');
 pos = get(fig,'Position');
 set(fig,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
-oFilePath=fullfile(outputDIR, sprintf('HK_log_%02i-%4i.pdf',month, year));
+oFilePath=fullfile(outputDIR, sprintf('solo_HK_rpw_tds_%4i%02i.pdf', year, month));
 if exist(oFilePath, 'file') == 2
     delete(oFilePath)
 end
@@ -256,7 +257,7 @@ ylabel('Snapshots in queue');
 set(fig,'Units','Inches');
 pos = get(fig,'Position');
 set(fig,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
-oFilePathap=fullfile(outputDIR, sprintf('.HK_log_%02i-%4iap.pdf',month, year));
+oFilePathap=fullfile(outputDIR, sprintf('.solo_HK_rpw_tds_%4i%02i.pdf', year, month));
 print(fig,oFilePathap, '-dpdf','-r0');    %CLOSE PDFs BEFORE RUNNING CODE
 close(fig)
 append_pdfs(oFilePath, oFilePathap)
