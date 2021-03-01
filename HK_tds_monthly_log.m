@@ -5,6 +5,8 @@ function HK_tds_monthly_log(month, year, inputDIR, outputDIR)
 %   inputDIR  path to HK data         ex: 'Z:\rpw\HK'
 %   outputDIR path to HK data         ex: 'D:\HK_logs' (the directory has to exist)
 
+% Set no LaTeX in Legends
+set(0, 'DefaultLegendInterpreter', 'none')
 
 if ~exist(inputDIR, 'dir')
     error('Input dir does not exist');
@@ -15,9 +17,10 @@ if ~exist(outputDIR, 'dir')
     return
 end
 if exist('append_pdfs') ~= 2
-    addpath('export_fig')
+    addpath('./export_fig')
 end
 addpath(pwd);
+% DP:toto neni potreba kdyz pouzivas fullfile()
 if inputDIR(end) ~= filesep
     inputDIR = [inputDIR filesep];
 end
@@ -58,7 +61,7 @@ for i=1:eomday(year,month)    % BROWSING DAYS IN MONTH
     if size(fPath) == [1,1]
     	fname = fullfile(fPath.folder, fPath.name);
     elseif size(fPath) == [0,1]
-        disp(['Missing data - file not found: ' fullfile(inputDIR,sprintf('%4i/%02i/%02i/solo_HK_rpw-tds*',year,month,i))])
+        disp(['Missing data - file not found: ' fullfile(inputDIR,sprintf('%4i/%02i/%02i/solo_HK_rpw-tds-',year,month,i))])
         continue
     elseif length(fPath) > 1
         disp('multiple files found, choosing highest version')
@@ -73,7 +76,7 @@ for i=1:eomday(year,month)    % BROWSING DAYS IN MONTH
         if sum(max(version) == version) == 1
             fname = fullfile(fPath.folder, char(names(max(version) == version)));
         else
-            error('choosing failed, multiple files with same version')
+            error('Selection failed, multiple files with same version found!')
             return
         end
     end
@@ -263,8 +266,6 @@ close(fig)
 append_pdfs(oFilePath, oFilePathap)
 delete(oFilePathap)
 
-
-
 %   CREATES PDFS WITH HK LOGS 60 LINES PER PDF
 lines = 60;
 for i = 0:ceil(length(logs)/lines)-1
@@ -282,6 +283,8 @@ for i = 0:ceil(length(logs)/lines)-1
     append_pdfs(oFilePath, oFilePathap)
     delete(oFilePathap)
 end
+
+return
 
 end
 
